@@ -27,6 +27,8 @@ pip install -U pip wheel
 pip install numpy pandas matplotlib scipy opencv-python tifffile jupyter
 # Follow SAM2 install instructions and verify its demo runs before using our notebook
 
+###---
+
 @article{Yan2025ForegutSplitting,
   author  = {Yan, Rui and Hoffmann, Ludwig A. and Oikonomou, Panagiotis and Li, Deng and Lee, ChangHee and Gill, Hasreet and Mongera, Alessandro and Nerurkar, Nandan L. and Mahadevan, L. and Tabin, Clifford J.},
   title   = {Convergent flow-mediated mesenchymal force drives embryonic foregut constriction and splitting},

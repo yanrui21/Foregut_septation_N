@@ -28,6 +28,8 @@ pip install numpy pandas matplotlib scipy opencv-python tifffile jupyter
 # Follow SAM2 install instructions and verify its demo runs before using our notebook
 ```
 
+Citation:
+```bash
 @article{Yan2025ForegutSplitting,
   author  = {Yan, Rui and Hoffmann, Ludwig A. and Oikonomou, Panagiotis and Li, Deng and Lee, ChangHee and Gill, Hasreet and Mongera, Alessandro and Nerurkar, Nandan L. and Mahadevan, L. and Tabin, Clifford J.},
   title   = {Convergent flow-mediated mesenchymal force drives embryonic foregut constriction and splitting},
@@ -36,6 +38,9 @@ pip install numpy pandas matplotlib scipy opencv-python tifffile jupyter
   doi     = {10.1101/2025.01.22.634318},
   url     = {https://www.biorxiv.org/content/10.1101/2025.01.22.634318v2}
 }
+
+```
+
 MIT License
 
 Copyright (c) 2025 Rui Yan
@@ -47,13 +52,3 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.

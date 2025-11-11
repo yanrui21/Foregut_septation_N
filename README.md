@@ -8,6 +8,7 @@ Code & notebooks accompanying: **Yan et al.** “Convergent flow-mediated mesenc
 - **PIV_strain_rate/** — Jupyter notebook that post-processes **PIVLab** velocity fields to compute strain rate and divergence maps. Includes example inputs. Contributed by Panos Oikonomou.
 - **Single-cell-tracking-and-trajectory-analysis/** — MATLAB utilities for TrackMate-exported trajectories: directionality, persistence, MSD with power-law fitting, and **vbSPT** state inference. Includes an example input. Contributed by Rui Yan.
 - **Golgi_Nuclei_Vectors/** — MATLAB utilities to compute nucleus→Golgi vectors and angle statistics (with a user-defined 0° reference) from dual-labeled, TrackMate-segmented data. Includes example inputs. Contributed by Rui Yan.
+- For the analysis of curvature and shape dynamics after SAM2 segmentation as well as theoretical modeling of mechano-chemical coupling of SHH diffusion, please see https://github.com/ludwighoffmann/CurvatureForegutSplit by Ludwig Hoffmann.
 
 ---
 

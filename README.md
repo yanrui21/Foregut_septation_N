@@ -4,8 +4,8 @@ Code & notebooks accompanying: **Yan et al.** “Convergent flow-mediated mesenc
 > This repository organizes the analysis used in the study into four task-focused folders with example inputs to help you validate your setup.
 
 ## Repository structure
-- **Foregut_Epithelium_Segmentation/** — Jupyter notebook using **Segment Anything Model 2 (SAM2)** to segment the foregut epithelium from surrounding mesenchyme. Includes example inputs. Contributed by Deng Li.
-- **PIV_strain_rate/** — Jupyter notebook that post-processes **PIVLab** velocity fields to compute strain rate and divergence maps. Includes example inputs. Contributed by Panos Oikonomou.
+- **Foregut_Epithelium_Segmentation/** — Jupyter notebook using **Segment Anything Model 2 (SAM2)** to segment the foregut epithelium from surrounding mesenchyme. Includes example inputs. Contributed by Deng Li (https://github.com/uplideng).
+- **PIV_strain_rate/** — Jupyter notebook that post-processes **PIVLab** velocity fields to compute strain rate and divergence maps. Includes example inputs. Contributed by Panos Oikonomou (https://github.com/eigenP).
 - **Single-cell-tracking-and-trajectory-analysis/** — MATLAB utilities for TrackMate-exported trajectories: directionality, persistence, MSD with power-law fitting, and **vbSPT** state inference. Includes an example input. Contributed by Rui Yan.
 - **Golgi_Nuclei_Vectors/** — MATLAB utilities to compute nucleus→Golgi vectors and angle statistics (with a user-defined 0° reference) from dual-labeled, TrackMate-segmented data. Includes example inputs. Contributed by Rui Yan.
 - For the analysis of curvature and shape dynamics after SAM2 segmentation as well as theoretical modeling of mechano-chemical coupling of SHH diffusion, please see https://github.com/ludwighoffmann/CurvatureForegutSplit by Ludwig Hoffmann.

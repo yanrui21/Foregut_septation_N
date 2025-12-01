@@ -1,5 +1,5 @@
 # Convergent Flow–Mediated Mesenchymal Force in Foregut Splitting
-Code & notebooks accompanying: **Yan et al.** “Convergent flow-mediated mesenchymal force drives embryonic foregut constriction and splitting.” *bioRxiv* (2025).
+Code & notebooks accompanying: **Yan et al.** “Convergent flow-mediated mesenchymal force drives embryonic foregut constriction and splitting.” *Nat. Commun.* (2025).
 
 > This repository organizes the analysis used in the study into four task-focused folders with example inputs to help you validate your setup.
 
@@ -34,10 +34,10 @@ Citation:
 @article{Yan2025ForegutSplitting,
   author  = {Yan, Rui and Hoffmann, Ludwig A. and Oikonomou, Panagiotis and Li, Deng and Lee, ChangHee and Gill, Hasreet and Mongera, Alessandro and Nerurkar, Nandan L. and Mahadevan, L. and Tabin, Clifford J.},
   title   = {Convergent flow-mediated mesenchymal force drives embryonic foregut constriction and splitting},
-  journal = {bioRxiv},
+  journal = {Nature Communications},
   year    = {2025},
-  doi     = {10.1101/2025.01.22.634318},
-  url     = {https://www.biorxiv.org/content/10.1101/2025.01.22.634318v2}
+  doi     = {10.1038/s41467-025-65644-9},
+  url     = {https://www.nature.com/articles/s41467-025-65644-9}
 }
 
 ```

@@ -1,50 +1,48 @@
 
 % PLOT_TRACKS_IN_ROI  Draw TrackMate trajectories that start inside a square ROI.
 %
-%   plot_tracks_in_ROI('6_edges.csv')
+%   plot_tracks_in_ROI('8_spots-dx7dx10x2.csv')
 %
-% The script assumes TrackMate “edge” export with three header lines:
+% The script assumes TrackMate “spot” export with three header lines:
 %   row 0 – column names, row 1 – aliases, row 2 – units.
 % Feel free to adapt variable names if your export differs.
 % For vbSPT analysis of diffusion states, please install dependencies from https://github.com/bmelinden/vbSPT
 
 %% 1. read the CSV --------------------------------------------------------
 clear all;
-    csvFile = '6_edges.csv';           % change the file path
+    csvFile = '8_spots-dx7dx10x2.csv';           % change the file path
 
 opts               = detectImportOptions(csvFile,'NumHeaderLines',3);
 T                  = readtable(csvFile,opts);
-
+T                  = T(:, 1:9);
 % Give human-friendly names
-T.Properties.VariableNames = {'Label','TrackID','SourceID' ,'TargetID','Cost','DirChange','Speed','Disp','Time','X','Y','Z' };
+T.Properties.VariableNames = {'Label','SpotID','TrackID' ,'Quality','X','Y','Z','Time','Frame' };
 
 %% 2. user-defined ROI (square, microns) ----------------------------------
 % Centre (µm) and half-size (µm) of the square ROI
-roiCentre   = [288 , 180];     % [x0 , y0] in microns
-roiHalfSize = [60, 60];              % half-length of a side
-toiWindow   = [0 , 15];     % time window in frame
-t_max = toiWindow(2) - toiWindow(1);
+roiCentre   = [96 , 155];     % [x0 , y0] in microns
+roiHalfSize = [50, 50];              % half-length of a side
+toiWindow   = [0 , 12];     % time window in frame
+t_max = toiWindow(2)-toiWindow(1);
 calib = 7.5;      % minutes per frame
 xmin = roiCentre(1) - roiHalfSize(1);
 xmax = roiCentre(1) + roiHalfSize(1);
-ymax = 420- (roiCentre(2) - roiHalfSize(2));     % invert y axis to match MATLAB matrix with image (subtract from the image size)
+ymax = 420- (roiCentre(2) - roiHalfSize(2));     % invert y axis (subtract from the image size)
 ymin = 420- (roiCentre(2) + roiHalfSize(2));
 T.Y = 420 - T.Y;
 %% 3. gather trajectories that begin inside the ROI -----------------------
 trackIDs = unique(T.TrackID);
 keepID   = false(size(trackIDs));
-
 for i = 1:numel(trackIDs)
     this      = T(T.TrackID == trackIDs(i),:);
     this      = sortrows(this,'Time');          % chronological order
-    if ~isempty(toiWindow)
-        this = this(this.Time >= toiWindow(1) & this.Time <= toiWindow(2), :);
-    end
-    if height(this) < 3,  continue;  end         % need ≥2 edges to plot
+    if height(this) < 5,  continue;  end         % need ≥2 edges to plot
     x0        = this.X(1);
     y0        = this.Y(1);
     t0        = this.Time(1);
-    keepID(i) = (x0>=xmin && x0<=xmax && y0>=ymin && y0<=ymax);
+    %T(T.TrackID == trackIDs(i),:).Time = T(T.TrackID == trackIDs(i),:).Time - this.Time(1);
+    %this.Time = this.Time - this.Time(1);
+    keepID(i) = (x0>=xmin && x0<=xmax && y0>=ymin && y0<=ymax && t0<=t_max-4);
 end
 
 selectedIDs = trackIDs(keepID);
@@ -57,16 +55,15 @@ for id = selectedIDs.'
     if ~isempty(toiWindow)
         traj = traj(traj.Time >= toiWindow(1) & traj.Time <= toiWindow(2), :);
     end;
-    if height(traj) < 3,  continue;  end;
-    % translate so first edge is at (0,0)
-    %x           = traj.X - traj.X(1);
+    if height(traj) < 5,  continue;  end;
+    %x           = traj.X - traj.X(1);      % translate so first edge is at (0,0)
     %y           = traj.Y - traj.Y(1);
     x           = traj.X;
     y           = traj.Y;
     % colour vector normalised 0-1 by elapsed time
     t           = traj.Time;
     cNorm       = (t - t(1)) ./ t_max;      % 0 … 1
-    cIdx        = round( 1 + cNorm * (size(cmap,1)-1) );
+    cIdx        = min(255,round( 1 + cNorm * (size(cmap,1)-1) ));
 
     % draw each edge segment in its colour
     for k = 1:numel(x)-1
@@ -101,6 +98,10 @@ angles = zeros(numel(selectedIDs),1);
 
 for n = 1:numel(selectedIDs)
     traj     = sortrows(T(T.TrackID==selectedIDs(n),:),'Time');
+    if ~isempty(toiWindow)
+        traj = traj(traj.Time >= toiWindow(1) & traj.Time <= toiWindow(2), :);
+    end;
+    if height(traj) < 5,  continue;  end;
     dx       = traj.X(end) - traj.X(1);     % displacement in µm
     dy       = traj.Y(end) - traj.Y(1);
     angles(n)= atan2(dy,dx);                % range −π … π
@@ -108,14 +109,14 @@ end
 
 %% A. rose plot / polar histogram ----------------------------------------
 figure;
-polarhistogram(angles, 12, ...     % 18 bins = 20° each – can be tuned
+polarhistogram(angles, 12, ...     % 18 bins = 20° each – tweak as you like
                'FaceAlpha',0.75, ...
                'EdgeColor','none');
 title('Angular distribution of final displacement vectors');
 % Add radial grid label
 rlim auto;
 
-%% B. (optional) Cartesian histogram for exact counts --------------------
+%% B. Cartesian histogram for exact counts --------------------
 % Convert to degrees 0–360 for readability
 angDeg = mod(rad2deg(angles), 360);
 
@@ -151,7 +152,7 @@ for id = selectedIDs.'
     if ~isempty(toiWindow)
         traj = traj(traj.Time >= toiWindow(1) & traj.Time <= toiWindow(2), :);
     end
-    if height(traj) < 3,  continue;  end    % need ≥2 points
+    if height(traj) < 5,  continue;  end    
 
     % ----------------- mean velocity components (µm s-1) ----------------
     dx   = traj.X(end) - traj.X(1);
@@ -206,23 +207,24 @@ for id = selectedIDs.'
         traj = traj(traj.Time >= toiWindow(1) & traj.Time <= toiWindow(2), :);
     end
     N = height(traj);
-    if N < 3,  continue;  end
+    if N < 5,  continue;  end
 
     x = traj.X;  y = traj.Y;
     msd = zeros(N-1,1);
     for m = 1:(N-1)
-        dx = x(1+m:end) - x(1:end-m);
-        dy = y(1+m:end) - y(1:end-m);
-        msd(m) = mean(dx.^2 + dy.^2);
+        dx = x(1+m) - x(1);
+        dy = y(1+m) - y(1);
+        msd(m) = dx.^2 + dy.^2;
     end
 
     % ----- plot individual curve in a random colour
     plot(1:(N-1), msd, 'Color', rand(1,3), 'LineWidth', 1.2);
 
     % ----- store for ensemble stats
-    allMSD{end+1,1} = msd;          
+    allMSD{end+1,1} = msd;        
     maxLagGl        = max(maxLagGl, numel(msd));
 end
+
 
 % ---------- SECOND PASS: assemble to rectangular array with NaNs ---------
 nTracks = numel(allMSD);
@@ -293,7 +295,7 @@ fprintf('Power-law MSD fit:\n    k      = %.6g (µm^2)\n    alpha  = %.4f\n', k,
 allTurn   = [];                  % turning angles (radians, –π … π)
 LpTracks  = [];                  % per-track persistence lengths
 TpTracks  = [];                  % per-track persistence times
-maxLagGlobal = 8; 
+maxLagGlobal = 5; 
 CvMat  = NaN(numel(selectedIDs), maxLagGlobal);
 CtMat  = NaN(numel(selectedIDs), maxLagGlobal);
 dtAll  = [];                              % collect Δt to estimate Δt̄
@@ -317,7 +319,7 @@ for id = selectedIDs.'
     v  = vx + 1i*vy;                        % complex vector for dot-product
     v2 = mean(abs(v).^2);                   % ⟨|v|²⟩  for normalisation
     % -- collect ----------------------------------------------------------
-    allTurn = [allTurn; turn];                  
+    allTurn = [allTurn; turn];                 
     for m = 1:maxLagGlobal
         CvMat(row,m) = real( mean( v(1:end-m) .* conj(v(1+m:end)) ) ) / v2;
         CtMat(row,m) = mean( cos( theta(1+m:end) - theta(1:end-m) ) );
@@ -328,7 +330,7 @@ for id = selectedIDs.'
     lBar= mean( sqrt(dx.^2 + dy.^2) );          % mean step length (µm)
     dtBar = mean(dt);                           % mean frame interval
 
-    LpTracks(end+1,1) = lBar / (1 - R);      
+    LpTracks(end+1,1) = lBar / (1 - R);         
     TpTracks(end+1,1) = dtBar * (1 + R)/(1 - R);
 end
 % 3. ensemble mean ± SD  (ignore NaNs from short tracks)
@@ -415,7 +417,7 @@ for id = selectedIDs.'
         traj = traj(traj.Time>=toiWindow(1) & traj.Time<=toiWindow(2), :);
     end
     N = height(traj);
-    if N < 3,  continue;  end
+    if N < 5,  continue;  end
 
     % -------- basic geometry --------------------------------------------
     x = traj.X;  y = traj.Y;          % µm
@@ -451,7 +453,7 @@ for id = selectedIDs.'
 
     % -------- collect ---------------------------------------------------
     metrics(end+1,:) = [ id, tortuosity, fractD, straightnes, ...
-                         Rg, meanMSD, netDisp, totTime ];          
+                         Rg, meanMSD, netDisp, totTime ];       
 end
 
 % ---------- convert to table for readability (optional) -----------------
@@ -467,7 +469,7 @@ fprintf('\nSaved %d trajectories × %d metrics  ➜  trajectory_shape_metrics.cs
         height(metricsTbl), width(metricsTbl)-1);
 %%   vbSPT
 % --- add vbSPT to the MATLAB path (one-time per session) ----------------
-addpath(genpath('vbSPT-master'));     % ← adjust to your install
+addpath(genpath('\\research.files.med.harvard.edu\genetics\Tabin_Lab-ryan\Matlab programs\vbSPT-master'));     % ← adjust to your install
 % ‘traj’ must be a cell array, each cell = [x y] positions (rows = frames)
 traj = cell(numel(selectedIDs),1);
 
@@ -475,10 +477,8 @@ for n = 1:numel(selectedIDs)
     id   = selectedIDs(n);
     tr   = sortrows( T(T.TrackID==id,:), 'Time' );
     if ~isempty(toiWindow)
-        tr = tr(tr.Time>=toiWindow(1) & tr.Time<=toiWindow(2),:);
-    end
-    N = height(tr);
-    if N < 3,  continue;  end
+        tr = tr(tr.Time >= toiWindow(1) & tr.Time <= toiWindow(2), :);
+    end;
     traj{n} = [ tr.X  tr.Y ];          % 2-D
 
 end
@@ -511,3 +511,5 @@ for n = 1:numel(selectedIDs)-1
     end
 end
 title(sprintf('Trajectories coloured by vbSPT state (K = %d)',K));
+
+
